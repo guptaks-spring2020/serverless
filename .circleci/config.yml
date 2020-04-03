@@ -1,0 +1,53 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.6
+
+    steps:
+
+      - checkout
+
+      - run:
+          name: Zip Artifact
+          command: |
+            echo "testing the current build number: ${CIRCLE_BUILD_NUM}"
+            pwd
+            mkdir -p artifacts
+            pwd
+            ls -al
+            zip -r serverless.zip lamda_func.py
+
+      - run:
+          name: Artifacts are being uploded to S3
+          command: |
+            sudo pip install awscli
+            cd artifacts
+            aws s3 cp serverless.zip s3://${BUCKET_NAME}
+
+      - run:
+          name: Update zip in lambda function
+          command: |
+            touch 777 lambda.txt
+            allfunctions=$(aws lambda list-functions --query 'Functions[?Version == `$LATEST`].{FunctionName:FunctionName}')
+            if [  `echo $allfunctions | grep -w -c "$FUNCTION_NAME" ` -gt 0 ]
+            then
+              echo "Function $FUNCTION_NAME exists already . Now trying to update it."
+              aws lambda update-function-code --region ${AWS_REGION} \
+                                              --function-name ${FUNCTION_NAME} \
+                                              --s3-bucket ${BUCKET_NAME} \
+                                              --s3-key DueBills.jar > lambda.txt
+              echo "Function has been updated successfully."
+            fi
+
+
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
