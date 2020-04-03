@@ -16,13 +16,12 @@ jobs:
             mkdir -p artifacts
             pwd
             ls -al
-            zip -r serverless.zip lamda_func.py
+            zip -r serverless.zip lambda_func.py
 
       - run:
           name: Artifacts are being uploded to S3
           command: |
             sudo pip install awscli
-            cd artifacts
             aws s3 cp serverless.zip s3://${BUCKET_NAME}
 
       - run:
