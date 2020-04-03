@@ -24,20 +24,13 @@ jobs:
             sudo pip install awscli
             aws s3 cp serverless.zip s3://${BUCKET_NAME}
 
+
       - run:
-          name: Update zip in lambda function
           command: |
             touch 777 lambda.txt
-            allfunctions=$(aws lambda list-functions --query 'Functions[?Version == `$LATEST`].{FunctionName:FunctionName}')
-            if [  `echo $allfunctions | grep -w -c "$FUNCTION_NAME" ` -gt 0 ]
-            then
-              echo "Function $FUNCTION_NAME exists already . Now trying to update it."
-              aws lambda update-function-code --region ${AWS_REGION} \
-                                              --function-name ${FUNCTION_NAME} \
-                                              --s3-bucket ${BUCKET_NAME} \
-                                              --s3-key lambda_func.jar > lambda.txt
-              echo "Function has been updated successfully."
-            fi
+            echo "Update the function"
+            aws lambda update-function-code --function-name  handler_name  --s3-bucket ${BUCKET_NAME} --s3-key serverless.zip --region ${AWS_REGION} > lambda.txt
+          name: Update the function
 
 
 
