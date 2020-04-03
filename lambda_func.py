@@ -27,7 +27,7 @@ def handler_name(event, context):
     sender = "no-reply@" + domain
     print(sender)
 
-    to = sender
+    to = email_id
 
     str_bills = json_dict['bills_list']['StringValue']
 
