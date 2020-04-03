@@ -26,11 +26,12 @@ jobs:
 
 
       - run:
+          name: Update the existing function
           command: |
             touch 777 lambda.txt
             echo "Update the function"
             aws lambda update-function-code --function-name  handler_name  --s3-bucket ${BUCKET_NAME} --s3-key serverless.zip --region ${AWS_REGION} > lambda.txt
-          name: Update the function
+
 
 
 
