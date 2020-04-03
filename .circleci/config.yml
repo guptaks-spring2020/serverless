@@ -35,7 +35,7 @@ jobs:
               aws lambda update-function-code --region ${AWS_REGION} \
                                               --function-name ${FUNCTION_NAME} \
                                               --s3-bucket ${BUCKET_NAME} \
-                                              --s3-key DueBills.jar > lambda.txt
+                                              --s3-key lambda_func.jar > lambda.txt
               echo "Function has been updated successfully."
             fi
 
